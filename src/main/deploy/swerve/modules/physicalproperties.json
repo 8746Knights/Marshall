@@ -4,16 +4,16 @@
   "wheelGripCoefficientOfFriction": 1.19,
   "currentLimit": {
     "drive": 40,
-    "angle": 20
+    "angle": 40
   },
   "conversionFactors": {
     "angle": {
-      "gearRatio": 0,
+      "gearRatio": 12.1,
       "factor": 0
     },
     "drive": {
-      "diameter": 0,
-      "gearRatio": 0,
+      "diameter": 4,
+      "gearRatio": 6.82,
       "factor": 0
     }
   },
