@@ -88,10 +88,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    //DriverStation.silenceJoystickConnectionWarning(true);
+    DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I AM MJ"));
     /*try {
-     // SwerveDrive swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Units.feetToMeters(14.5));
+     SwerveDrive swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Units.feetToMeters(14.5));
     } catch ( Exception e) {
       System.out.println("Caught Exception instantiating SwerveDrive" + e);
      }*/
@@ -108,22 +108,22 @@ public class RobotContainer {
    */
   private void configureBindings() {
   
-    /*Command driveFieldOrientedDirectAngle         = swerveDrive.driveFieldOriented();
-    Command driveFieldOrientedAnglularVelocity    = swerveDrive.driveFieldOriented(driveAngularVelocity);
-    Command driveSetpointGen                      = swerveDrive.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleSim      = swerveDrive.driveFieldOriented(driveDirectAngleSim);
-    Command driveFieldOrientedAnglularVelocitySim = swerveDrive.driveFieldOriented(driveAngularVelocitySim);
-    Command driveSetpointGenSim = swerveDrive.driveWithSetpointGeneratorFieldRelative(
+    Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
+    Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
+    Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+    Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
+    Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
+    Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
 
     if (RobotBase.isSimulation())
     {
-      swerveDrive.setDefaultCommand(driveFieldOrientedDirectAngleSim);
+      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else
     {
-      swerveDrive.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
-*/
+
     
 
   }
