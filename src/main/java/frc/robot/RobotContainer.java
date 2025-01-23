@@ -6,11 +6,10 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
+import edu.wpi.first.math.util.Units;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -25,7 +24,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
+import swervelib.parser.SwerveParser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,13 +40,16 @@ public class RobotContainer {
     // set up the Joystick
     final         CommandJoystick m_driverController = new CommandJoystick(OperatorConstants.kDriverControllerPort);
 
-  // instantiate a SwerveSubsystem pointing to the deploy/swerve/maxSwerve configuration 
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                                "swerve/maxSwerve"));
+  // instantiate a SwerveSubsystem pointing to the deploy/swerve configuration 
+  //SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
+  //     
+  SwerveDrive swerveDrive = null;                                                                         
+
+
  /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveDrive,
                                                                 () -> m_driverController.getY() * -1,
                                                                 () -> m_driverController.getX() * -1)
                                                             .withControllerRotationAxis(m_driverController::getX)
@@ -59,7 +63,7 @@ public class RobotContainer {
   m_driverController::getY)
                                                            .headingWhile(true);
 
- SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
+ SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(swerveDrive,
                                                                    () -> -m_driverController.getY(),
                                                                    () -> -m_driverController.getX())
                                                                .withControllerRotationAxis(() -> m_driverController.getRawAxis(2))
@@ -86,6 +90,11 @@ public class RobotContainer {
     configureBindings();
     //DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I AM MJ"));
+    try {
+      SwerveDrive swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Units.feetToMeters(14.5));
+     } catch ( Exception e) {
+      System.out.println("Caught Exception instantiating SwerveDrive" + e);
+     }
   }
 
   /**
@@ -99,22 +108,22 @@ public class RobotContainer {
    */
   private void configureBindings() {
   
-    Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
-    Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
-    Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
+    /*Command driveFieldOrientedDirectAngle         = swerveDrive.driveFieldOriented();
+    Command driveFieldOrientedAnglularVelocity    = swerveDrive.driveFieldOriented(driveAngularVelocity);
+    Command driveSetpointGen                      = swerveDrive.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+    Command driveFieldOrientedDirectAngleSim      = swerveDrive.driveFieldOriented(driveDirectAngleSim);
+    Command driveFieldOrientedAnglularVelocitySim = swerveDrive.driveFieldOriented(driveAngularVelocitySim);
+    Command driveSetpointGenSim = swerveDrive.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
 
     if (RobotBase.isSimulation())
     {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
+      swerveDrive.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else
     {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      swerveDrive.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
-
+*/
     
 
   }
@@ -126,6 +135,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(null); // TBD: Anna to fix
+    return null; // TBD: Anna to fix
   }
 }
