@@ -41,7 +41,7 @@ public class RobotContainer {
     final         CommandJoystick m_driverController = new CommandJoystick(OperatorConstants.kDriverControllerPort);
 
   // instantiate a SwerveSubsystem pointing to the deploy/swerve configuration 
-  SwerveSubsystem drivebase = null;
+  SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
   //     
   //SwerveDrive swerveDrive = null;                                                                         
 
@@ -90,12 +90,11 @@ public class RobotContainer {
     configureBindings();
     //DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I AM MJ"));
-    try {
+    /*try {
      // SwerveDrive swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Units.feetToMeters(14.5));
-      drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
     } catch ( Exception e) {
       System.out.println("Caught Exception instantiating SwerveDrive" + e);
-     }
+     }*/
   }
 
   /**
