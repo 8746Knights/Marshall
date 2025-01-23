@@ -41,15 +41,15 @@ public class RobotContainer {
     final         CommandJoystick m_driverController = new CommandJoystick(OperatorConstants.kDriverControllerPort);
 
   // instantiate a SwerveSubsystem pointing to the deploy/swerve configuration 
-  //SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
+  SwerveSubsystem drivebase = null;
   //     
-  SwerveDrive swerveDrive = null;                                                                         
+  //SwerveDrive swerveDrive = null;                                                                         
 
 
  /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveDrive,
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> m_driverController.getY() * -1,
                                                                 () -> m_driverController.getX() * -1)
                                                             .withControllerRotationAxis(m_driverController::getX)
@@ -63,7 +63,7 @@ public class RobotContainer {
   m_driverController::getY)
                                                            .headingWhile(true);
 
- SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(swerveDrive,
+ SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                    () -> -m_driverController.getY(),
                                                                    () -> -m_driverController.getX())
                                                                .withControllerRotationAxis(() -> m_driverController.getRawAxis(2))
@@ -91,8 +91,9 @@ public class RobotContainer {
     //DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I AM MJ"));
     try {
-      SwerveDrive swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Units.feetToMeters(14.5));
-     } catch ( Exception e) {
+     // SwerveDrive swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(Units.feetToMeters(14.5));
+      drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
+    } catch ( Exception e) {
       System.out.println("Caught Exception instantiating SwerveDrive" + e);
      }
   }
