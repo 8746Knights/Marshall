@@ -48,4 +48,41 @@ public final class Constants {
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+  public static class ElevatorConstants {
+    public static final int ELEVATOR_SPARKMAX = 15;
+
+    /* Constants for the profiled PID Controller
+     * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/controller/ProfiledPIDController.html
+     * 
+     * Kp - The proportional coefficient. Must be >= 0.
+     * Ki - The integral coefficient. Must be >= 0.
+     * Kd - The differential coefficient. Must be >= 0.
+      */
+    public static final double ELEVATOR_KP = 5;
+    public static final double ELEVATOR_KI = 5;
+    public static final double ELEVATOR_KD = 5;
+
+
+    public static final double MAX_VELOCITY = Meters.of(4).per(Second).in(MetersPerSecond);
+    public static final double MAX_ACCELERATION = Meters.of(6).per(Second).per(Second).in(MetersPerSecondPerSecond);
+
+
+    /**
+     * contsants for the elevator feed forward
+     * https://first.wpi.edu/wpilib/allwpilib/docs/release/java/edu/wpi/first/math/controller/ElevatorFeedforward.html
+     * ks - The static gain.
+     * kg - The gravity gain.
+     * kv - The velocity gain.
+     * ka - The acceleration gain.
+     */
+    //voltage to overcome static friction
+    public static final double ELEVATOR_KS = 0.02;
+    //voltage to overcome gravity
+    public static final double ELEVATOR_KG = 0.9;
+    //voltage to overcome velocity
+    public static final double ELEVATOR_KV = 3.8;
+    //voltage to overcome acceleration
+    public static final double ELEVATOR_KA = 0.17;
+
+  }
 }
