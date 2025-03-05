@@ -6,6 +6,8 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
@@ -81,11 +83,13 @@ public class RobotContainer {
                                                                                                       (Math.PI * 2))
                                                                      .headingWhile(true);
 
-
+  Elevator elevator = null;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    elevator = new Elevator(new ElevatorIOSparkMax());
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);

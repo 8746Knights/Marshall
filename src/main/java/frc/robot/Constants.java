@@ -49,7 +49,9 @@ public final class Constants {
     public static final double TURN_CONSTANT    = 6;
   }
   public static class ElevatorConstants {
-    public static final int ELEVATOR_SPARKMAX = 15;
+    //public static final int ELEVATOR_SPARKMAX = 15;
+    public static final int ELEVATOR_LEAD_SM = 21;
+    public static final int ELEVATOR_FOLLOWER_SM = 26;
 
     /* Constants for the profiled PID Controller
      * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/controller/ProfiledPIDController.html
@@ -58,13 +60,14 @@ public final class Constants {
      * Ki - The integral coefficient. Must be >= 0.
      * Kd - The differential coefficient. Must be >= 0.
       */
-    public static final double ELEVATOR_KP = 5;
-    public static final double ELEVATOR_KI = 5;
-    public static final double ELEVATOR_KD = 5;
+    public static final double ELEVATOR_KP = .027;
+    public static final double ELEVATOR_KI = 0;
+    public static final double ELEVATOR_KD = 0;
+    public static final double ELEVATOR_KFF = .0085;
 
 
-    public static final double MAX_VELOCITY = Meters.of(4).per(Second).in(MetersPerSecond);
-    public static final double MAX_ACCELERATION = Meters.of(6).per(Second).per(Second).in(MetersPerSecondPerSecond);
+    //public static final double MAX_VELOCITY = Meters.of(4).per(Second).in(MetersPerSecond);
+    //public static final double MAX_ACCELERATION = Meters.of(6).per(Second).per(Second).in(MetersPerSecondPerSecond);
 
 
     /**
