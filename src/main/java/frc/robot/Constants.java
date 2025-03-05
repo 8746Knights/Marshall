@@ -49,9 +49,8 @@ public final class Constants {
     public static final double TURN_CONSTANT    = 6;
   }
   public static class ElevatorConstants {
-    //public static final int ELEVATOR_SPARKMAX = 15;
-    public static final int ELEVATOR_LEAD_SM = 21;
-    public static final int ELEVATOR_FOLLOWER_SM = 26;
+    public static final int ELEVATOR_LEAD_SM = CANConstants.ELEVATOR_LEAD_SM;
+    public static final int ELEVATOR_FOLLOWER_SM = CANConstants.ELEVATOR_FOLLOWER_SM;
 
     /* Constants for the profiled PID Controller
      * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/controller/ProfiledPIDController.html
@@ -88,4 +87,48 @@ public final class Constants {
     public static final double ELEVATOR_KA = 0.17;
 
   }
+  public static class CANConstants {
+
+    // Elevator
+    public static final int ELEVATOR_LEAD_SM = 21;
+    public static final int ELEVATOR_FOLLOWER_SM = 26;
+
+    //Coral Intake
+    public static final int WRIST_SM = 19;
+    public static final int CORALINTAKE_SM = 18;
+
+    // Algae intake
+    public static final int ALGAE_ONE_SM = 17;
+    public static final int ALGAE_TWO_SM = 23;
+
+    // climber 
+    public static final int CLIMBER_SM = 22;
+
+    // Pigeon - 14 (Set in JSON Files under modules)
+
+    // PDH - 25 (not used in code)
+
+    // Swerve - ( 1-12 ) - Set in JSON Files under modules
+
+  }
+
+  public static class IntakeConstants {
+
+    public static final double CORAL_KP = 0.55;
+    public static final double CORAL_KI = 0;
+    public static final double CORAL_KD = 0;
+    public static final double CORAL_KFF = 0.00375;
+
+    public static final int CORAL_AMP = 15;
+    public static final int WRIST_AMP = 40;
+
+    public static final int ALGAE_AMP = 15;
+  }
+
+  public static class ClimberConstants {
+    public static final int CLIMBER_AMP = 40;
+    public static final int MOTOR_GEAR_RATIO = 100;
+    public static final int CAN_TIMEOUT = 250;
+  }
+
 }
