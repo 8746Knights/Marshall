@@ -1,9 +1,13 @@
+package frc.robot.subsystems.climber;
 
-import com.revrobotics.spark.SparkBase.IdleMode;
+import com.revrobotics.spark.SparkBase.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.*;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.Constants.CANConstants;
+import frc.robot.Constants.ClimberConstants;
 
 /** Add your docs here. */
 public class ClimberIOSparkMax implements ClimberIO {
@@ -27,14 +31,9 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     SparkMaxConfig motorConfig = new SparkMaxConfig();
     motorConfig
-        .restoreFactoryDefaults()
-        .invert(false)
-        .setSmartCurrentLimit(ClimberConstants.CLIMBER_AMP)
-        .idleMode(IdleMode.kBrake)
-        .setCANTimeout(ClimberConstants.CAN_TIMEOUT)
-    motorConfig
-        .closedLoop
-            .pidf(IntakeConstants.CORAL_KP, IntakeConstants.CORAL_KI, IntakeConstants.CORAL_KD, IntakeConstants.CORAL_KFF);
+        .inverted(false)
+        .smartCurrentLimit(ClimberConstants.CLIMBER_AMP)
+        .idleMode(IdleMode.kBrake);
 
 
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -43,10 +42,10 @@ public class ClimberIOSparkMax implements ClimberIO {
 
   @Override
   public void setMotorVoltage(double volts) {
-    motor1.setVoltage(volts);
+    motor.setVoltage(volts);
   }
 
   public void stopMotor() {
-    motor1.stopMotor();
+    motor.stopMotor();
   }
 }

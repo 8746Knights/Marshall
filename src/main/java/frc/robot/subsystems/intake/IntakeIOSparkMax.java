@@ -1,11 +1,17 @@
 
+package frc.robot.subsystems.intake;
+
+
 import com.revrobotics.spark.SparkBase.*;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.RelativeEncoder;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.config.*;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
+
+import frc.robot.Constants.*;
 
 public class IntakeIOSparkMax implements IntakeIO {
   SparkMax algaeMotor1;
@@ -26,9 +32,9 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     SparkMaxConfig coralWristConfig = new SparkMaxConfig();
     coralWristConfig
-        .invert(false)
-        .setSmartCurrentLimit(IntakeConstants.WRIST_AMP)
-        .idleMode(IdleMode.kBrake)
+        .inverted(false)
+        .smartCurrentLimit(IntakeConstants.WRIST_AMP)
+        .idleMode(IdleMode.kBrake);
     coralWristConfig
         .closedLoop
             .pidf(IntakeConstants.CORAL_KP, IntakeConstants.CORAL_KI, IntakeConstants.CORAL_KD, IntakeConstants.CORAL_KFF);
@@ -37,26 +43,24 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     SparkMaxConfig algae1Config = new SparkMaxConfig();
     algae1Config
-        .restoreFactoryDefaults()
-        .setSmartCurrentLimit(IntakeConstants.ALGAE_AMP)
-        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(IntakeConstants.ALGAE_AMP)
+        .idleMode(IdleMode.kBrake);
 
-    algaeMotor1.configure(algae1Config, ResetMode.kResetSafeParameters, PersistMode,kPersistParameters);
+    algaeMotor1.configure(algae1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     SparkMaxConfig algae2Config = new SparkMaxConfig();
     algae2Config
-        .restoreFactoryDefaults()
-        .setSmartCurrentLimit(IntakeConstants.ALGAE_AMP)
-        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(IntakeConstants.ALGAE_AMP)
+        .idleMode(IdleMode.kBrake);
 
-    algaeMotor2.configure(algae2Config, ResetMode.kResetSafeParameters, PersistMode,kPersistParameters);
+    algaeMotor2.configure(algae2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     SparkMaxConfig coralIntakeConfig = new SparkMaxConfig();
     coralIntakeConfig
-        .setSmartCurrentLimit(IntakeConstants.CORAL_AMP)
-        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(IntakeConstants.CORAL_AMP)
+        .idleMode(IdleMode.kBrake);
 
-    coralIntake.configure(coralIntakeConfig, ResetMode.kResetSafeParameters, PersistMode,kPersistParameters);
+    coralIntake.configure(coralIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
   }
 
@@ -86,7 +90,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   @Override
   public void wristAngle(double position) {
     // System.out.println("Wrist position: " + getWristPosition());
-    coralWrist.getPIDController().setReference(position, CANSparkMax.ControlType.kPosition);
+    coralWrist.getClosedLoopController().setReference(position, ControlType.kPosition);
   }
 
   @Override
