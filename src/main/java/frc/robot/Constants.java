@@ -104,7 +104,8 @@ public final class Constants {
     // climber 
     public static final int CLIMBER_SM = 22;
 
-    // Pigeon - 14 (Set in JSON Files under modules)
+    // Pigeon - 14 (Also set in JSON Files under modules)
+    public static final int PIGEON_ID = 14;
 
     // PDH - 25 (not used in code)
 
@@ -129,6 +130,28 @@ public final class Constants {
     public static final int CLIMBER_AMP = 40;
     public static final int MOTOR_GEAR_RATIO = 100;
     public static final int CAN_TIMEOUT = 250;
+  }
+
+  public static class ReefscapeConstants {
+    public static final double PROCESSOR_HEIGHT = 0;
+    public static final double SOURCE_HEIGHT = 8.75;
+    public static final double L1_HEIGHT = 3;
+    public static final double L2_HEIGHT = 4.75;
+    public static final double L3_HEIGHT = 21.5;
+    public static final double L4_HEIGHT = 52.5;
+    public static final double TOP_ALGAE_HEIGHT = 34.5;
+  
+    public static final double WRIST_CONVERSION_FACTOR = 243 / 9;
+    public static final double PROCESSOR_ANGLE = 0;
+    public static final double SOURCE_ANGLE = 0.15 * WRIST_CONVERSION_FACTOR;
+    public static final double L1_ANGLE = 0.35 * WRIST_CONVERSION_FACTOR;
+    public static final double L2_ANGLE = 0.255 * WRIST_CONVERSION_FACTOR;
+    public static final double L3_ANGLE = 0.27 * WRIST_CONVERSION_FACTOR;
+    public static final double L4_ANGLE = 0.335 * WRIST_CONVERSION_FACTOR;
+    public static final double TOP_ALGAE_ANGLE = 0;
+
+    public static final double DRIVE_OFF_LINE = 1.0;
+    public static final double DRIVE_OFF_SPEED = .40;
   }
 
 }

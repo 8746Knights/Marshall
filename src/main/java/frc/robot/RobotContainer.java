@@ -4,25 +4,32 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.*;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.intake.*;
+import frc.robot.subsystems.climber.*;
 
 import java.io.File;
 import edu.wpi.first.math.util.Units;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -40,7 +47,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
     // set up the Joystick
-    final         CommandJoystick m_driverController = new CommandJoystick(OperatorConstants.kDriverControllerPort);
+    //final         CommandJoystick m_driverController = new CommandJoystick(OperatorConstants.kDriverControllerPort);
+    final CommandXboxController m_driverController = new CommandXboxController(0);
+    final CommandXboxController m_otherController = new CommandXboxController(1);
 
   // instantiate a SwerveSubsystem pointing to the deploy/swerve configuration 
   SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
@@ -52,22 +61,22 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_driverController.getY() * -1,
-                                                                () -> m_driverController.getX() * -1)
-                                                            .withControllerRotationAxis(m_driverController::getX)
+                                                                () -> m_driverController.getLeftY() * -1,
+                                                                () -> m_driverController.getLeftX() * -1)
+                                                            .withControllerRotationAxis(m_driverController::getRightX)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getX,
-  m_driverController::getY)
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getRightX,
+  m_driverController::getRightY)
                                                            .headingWhile(true);
 
  SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                   () -> -m_driverController.getY(),
-                                                                   () -> -m_driverController.getX())
+                                                                   () -> -m_driverController.getLeftY(),
+                                                                   () -> -m_driverController.getLeftX())
                                                                .withControllerRotationAxis(() -> m_driverController.getRawAxis(2))
                                                                .deadband(OperatorConstants.DEADBAND)
                                                                .scaleTranslation(0.8)
@@ -83,13 +92,30 @@ public class RobotContainer {
                                                                                                       (Math.PI * 2))
                                                                      .headingWhile(true);
 
-  Elevator elevator = null;
+  private Elevator elevator = null;
+  private Climber climber = null;
+  private Intake intake = null;
+
+    // Dashboard inputs
+  private static SendableChooser<Command> autoChooser;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     elevator = new Elevator(new ElevatorIOSparkMax());
+    climber = new Climber(new ClimberIOSparkMax());
+    intake = new Intake(new IntakeIOSparkMax());
+
+    //autoChooser = AutoBuilder.buildAutoChooser();
+    ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    autoTab.add(autoChooser);
+
+    Command autoCommand = new RunCommand (() -> drivebase.driveToDistanceCommand(ReefscapeConstants.DRIVE_OFF_LINE,ReefscapeConstants.DRIVE_OFF_SPEED),drivebase);
+    autoChooser.addOption("Drive Off line", autoCommand);
+
+
+    
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -128,7 +154,123 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
 
-    
+    Pigeon2 pigeon = new Pigeon2(CANConstants.PIGEON_ID);
+    pigeon.reset();
+
+    /*
+     * CLIMBER COMMANDS & CONTROLS
+     */
+    //TODO: Set these numbers??
+    Command climbUpCommand =
+        new StartEndCommand(() -> climber.setMotorVoltage(1.5), () -> climber.stopMotor(), climber);
+    m_driverController.povUp().whileTrue(climbUpCommand);
+
+    Command climbDownCommand =
+        new StartEndCommand(() -> climber.setMotorVoltage(-4), () -> climber.stopMotor(), climber);
+    m_driverController.povDown().whileTrue(climbDownCommand);
+
+    Command climbHoldCommand =
+        new StartEndCommand(
+            () -> climber.setMotorVoltage(-0.75), () -> climber.stopMotor(), climber);
+    m_driverController.povLeft().whileTrue(climbHoldCommand);
+   
+
+    /*
+     * ALGAE COMMANDS & CONTROLS
+     */
+    Command ejectAlgaeCommand =
+        new StartEndCommand(
+            () -> intake.setAlgaeVoltage(12), () -> intake.setAlgaeVoltage(0), intake);
+    m_driverController.rightBumper().whileTrue(ejectAlgaeCommand);
+
+    Command intakeAlgaeCommand =
+        new StartEndCommand(
+            () -> intake.setAlgaeVoltage(-12), () -> intake.setAlgaeVoltage(0), intake);
+    m_driverController.rightTrigger().whileTrue(intakeAlgaeCommand);
+
+    /*
+     * ALGAE PROCESSOR
+     */
+    Command liftToProcessorCommand =
+        new RunCommand(() -> elevator.setPosition(ReefscapeConstants.PROCESSOR_HEIGHT), elevator);
+    Command wristToProcessorCommand =
+        new RunCommand(() -> intake.wristAngle(ReefscapeConstants.PROCESSOR_ANGLE), intake);
+    ParallelCommandGroup processorCommandGroup =
+        new ParallelCommandGroup(liftToProcessorCommand, wristToProcessorCommand);
+    m_otherController.povDown().onTrue(processorCommandGroup);
+
+
+    /*
+     * CORAL INTAKE
+     */
+    Command intakeCoralCommand =
+      new StartEndCommand(
+            () -> intake.setCoralIntakeVoltage(-6), () -> intake.setCoralIntakeVoltage(0), intake);
+    m_driverController.leftTrigger().whileTrue(intakeCoralCommand);
+
+    Command ejectCoralCommand =
+        new StartEndCommand(
+            () -> intake.setCoralIntakeVoltage(6), () -> intake.setCoralIntakeVoltage(0), intake);
+    m_otherController.leftBumper().whileTrue(ejectCoralCommand);
+
+        // set elevator and wrist to intake position
+    Command liftToSourceCommand =
+        new RunCommand(() -> elevator.setPosition(ReefscapeConstants.SOURCE_HEIGHT), elevator);
+    Command wristToSourceCommand = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.SOURCE_ANGLE), intake);
+    ParallelCommandGroup sourceCommandGroup =
+        new ParallelCommandGroup(liftToSourceCommand, wristToSourceCommand);
+    m_otherController.povLeft().onTrue(sourceCommandGroup);
+
+    /*
+     * REEF STATES
+     */
+    // L1 state
+    Command liftToL1Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L1_HEIGHT), elevator);
+    Command wristToL1Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L1_ANGLE), intake);
+    ParallelCommandGroup l1CommandGroup =
+        new ParallelCommandGroup(liftToL1Command, wristToL1Command);
+    m_otherController.a().onTrue(l1CommandGroup);
+
+    // L2 state
+    Command liftToL2Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L2_HEIGHT), elevator);
+    Command wristToL2Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L2_ANGLE), intake);
+    ParallelCommandGroup l2CommandGroup =
+        new ParallelCommandGroup(liftToL2Command, wristToL2Command);
+    m_otherController.b().onTrue(l2CommandGroup);
+
+    // L3 state
+    Command liftToL3Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L3_HEIGHT), elevator);
+    Command wristToL3Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L3_ANGLE), intake);
+    ParallelCommandGroup l3CommandGroup =
+        new ParallelCommandGroup(liftToL3Command, wristToL3Command);
+    m_otherController.y().onTrue(l3CommandGroup);
+
+    // L4 state
+    Command liftToL4Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L4_HEIGHT), elevator);
+    Command wristToL4Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L4_ANGLE), intake);
+    ParallelCommandGroup l4CommandGroup =
+        new ParallelCommandGroup(liftToL4Command, wristToL4Command);
+    m_otherController.x().onTrue(l4CommandGroup);
+
+    // Top algae state
+    Command liftToTopAlgaeCommand =
+        new RunCommand(() -> elevator.setPosition(ReefscapeConstants.TOP_ALGAE_HEIGHT), elevator);
+    Command wristToTopAlgaeCommand =
+        new RunCommand(() -> intake.wristAngle(ReefscapeConstants.TOP_ALGAE_ANGLE), intake);
+    ParallelCommandGroup topAlgaeCommandGroup =
+        new ParallelCommandGroup(liftToTopAlgaeCommand, wristToTopAlgaeCommand);
+    m_otherController.povUp().onTrue(topAlgaeCommandGroup);
+
+    /*
+     * Manual Controls
+     */
+    Command manualLift =
+        new RunCommand(() -> elevator.setVoltage(-m_otherController.getLeftY() * 0.5), elevator);
+    Command manualWrist =
+        new RunCommand(() -> intake.setWristVoltage(m_otherController.getRightY() * 0.25),
+     intake);
+    ParallelCommandGroup manualCommandGroup = new ParallelCommandGroup(manualLift, manualWrist);
+    m_otherController.start().whileTrue(manualCommandGroup);
 
   }
 
@@ -138,7 +280,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return null; // TBD: Anna to fix
+    return autoChooser.getSelected().withTimeout(1.5);
   }
 }
