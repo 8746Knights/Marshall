@@ -62,8 +62,9 @@ public final class Constants {
     public static final double ELEVATOR_KP = .027;
     public static final double ELEVATOR_KI = 0;
     public static final double ELEVATOR_KD = 0;
-    public static final double ELEVATOR_KFF = .0085;
+    public static final double ELEVATOR_KFF = .0005;
 
+    public static final int ELEV_AMP = 40;
 
     //public static final double MAX_VELOCITY = Meters.of(4).per(Second).in(MetersPerSecond);
     //public static final double MAX_ACCELERATION = Meters.of(6).per(Second).per(Second).in(MetersPerSecondPerSecond);
@@ -133,13 +134,13 @@ public final class Constants {
   }
 
   public static class ReefscapeConstants {
-    public static final double PROCESSOR_HEIGHT = 0;
-    public static final double SOURCE_HEIGHT = 8.75;
+    public static final double PROCESSOR_HEIGHT = 0;     
+    public static final double SOURCE_HEIGHT =  8.75;
     public static final double L1_HEIGHT = 3;
     public static final double L2_HEIGHT = 4.75;
-    public static final double L3_HEIGHT = 21.5;
+    public static final double L3_HEIGHT =  21.5;
     public static final double L4_HEIGHT = 52.5;
-    public static final double TOP_ALGAE_HEIGHT = 34.5;
+    public static final double TOP_ALGAE_HEIGHT = PROCESSOR_HEIGHT + 34.5;
   
     public static final double WRIST_CONVERSION_FACTOR = 243 / 9;
     public static final double PROCESSOR_ANGLE = 0;

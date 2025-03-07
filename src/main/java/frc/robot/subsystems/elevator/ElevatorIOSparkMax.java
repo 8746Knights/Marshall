@@ -29,9 +29,12 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     //get PID Controller
 
+
     SparkMaxConfig leadConfig = new SparkMaxConfig();
     leadConfig
-        .idleMode(IdleMode.kBrake);
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(ElevatorConstants.ELEV_AMP)
+        .inverted(true);
     leadConfig
         .closedLoop
             .pidf(ElevatorConstants.ELEVATOR_KP,ElevatorConstants.ELEVATOR_KI,ElevatorConstants.ELEVATOR_KD, ElevatorConstants.ELEVATOR_KFF);
@@ -41,7 +44,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     SparkMaxConfig followerConfig = new SparkMaxConfig();
     followerConfig
-        .follow(leadMotor,true)
+        .follow(leadMotor, true)
+        .smartCurrentLimit(ElevatorConstants.ELEV_AMP)
         .idleMode(IdleMode.kBrake);
     followerConfig
         .closedLoop

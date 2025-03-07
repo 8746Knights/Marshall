@@ -92,12 +92,13 @@ public class RobotContainer {
                                                                                                       (Math.PI * 2))
                                                                      .headingWhile(true);
 
-  private Elevator elevator = null;
-  private Climber climber = null;
-  private Intake intake = null;
+  private Elevator elevator;
+  private Climber climber;
+  private Intake intake;
+
 
     // Dashboard inputs
-  private static SendableChooser<Command> autoChooser;
+    private static SendableChooser<Command> autoChooser;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -107,12 +108,12 @@ public class RobotContainer {
     climber = new Climber(new ClimberIOSparkMax());
     intake = new Intake(new IntakeIOSparkMax());
 
-    //autoChooser = AutoBuilder.buildAutoChooser();
-    ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
-    autoTab.add(autoChooser);
+    // autoChooser = AutoBuilder.buildAutoChooser();
+    // ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    // autoTab.add(autoChooser);
 
-    Command autoCommand = new RunCommand (() -> drivebase.driveToDistanceCommand(ReefscapeConstants.DRIVE_OFF_LINE,ReefscapeConstants.DRIVE_OFF_SPEED),drivebase);
-    autoChooser.addOption("Drive Off line", autoCommand);
+   // Command autoCommand = new RunCommand (() -> drivebase.driveToDistanceCommand(ReefscapeConstants.DRIVE_OFF_LINE,ReefscapeConstants.DRIVE_OFF_SPEED),drivebase);
+   // autoChooser.addOption("Drive Off line", autoCommand);
 
 
     
@@ -162,11 +163,11 @@ public class RobotContainer {
      */
     //TODO: Set these numbers??
     Command climbUpCommand =
-        new StartEndCommand(() -> climber.setMotorVoltage(1.5), () -> climber.stopMotor(), climber);
+        new StartEndCommand(() -> climber.setMotorVoltage(5), () -> climber.stopMotor(), climber);
     m_driverController.povUp().whileTrue(climbUpCommand);
 
     Command climbDownCommand =
-        new StartEndCommand(() -> climber.setMotorVoltage(-4), () -> climber.stopMotor(), climber);
+        new StartEndCommand(() -> climber.setMotorVoltage(-5), () -> climber.stopMotor(), climber);
     m_driverController.povDown().whileTrue(climbDownCommand);
 
     Command climbHoldCommand =
@@ -181,13 +182,13 @@ public class RobotContainer {
     Command ejectAlgaeCommand =
         new StartEndCommand(
             () -> intake.setAlgaeVoltage(12), () -> intake.setAlgaeVoltage(0), intake);
-    m_driverController.rightBumper().whileTrue(ejectAlgaeCommand);
+    m_otherController.rightBumper().whileTrue(ejectAlgaeCommand);
 
     Command intakeAlgaeCommand =
         new StartEndCommand(
             () -> intake.setAlgaeVoltage(-12), () -> intake.setAlgaeVoltage(0), intake);
-    m_driverController.rightTrigger().whileTrue(intakeAlgaeCommand);
-
+    // m_driverController.rightTrigger().whileTrue(intakeAlgaeCommand);
+    m_otherController.rightTrigger(0.25).whileTrue(intakeAlgaeCommand);
     /*
      * ALGAE PROCESSOR
      */
@@ -206,7 +207,7 @@ public class RobotContainer {
     Command intakeCoralCommand =
       new StartEndCommand(
             () -> intake.setCoralIntakeVoltage(-6), () -> intake.setCoralIntakeVoltage(0), intake);
-    m_driverController.leftTrigger().whileTrue(intakeCoralCommand);
+    m_otherController.leftTrigger(0.25).whileTrue(intakeCoralCommand);
 
     Command ejectCoralCommand =
         new StartEndCommand(
@@ -230,6 +231,7 @@ public class RobotContainer {
     ParallelCommandGroup l1CommandGroup =
         new ParallelCommandGroup(liftToL1Command, wristToL1Command);
     m_otherController.a().onTrue(l1CommandGroup);
+    
 
     // L2 state
     Command liftToL2Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L2_HEIGHT), elevator);
@@ -269,8 +271,10 @@ public class RobotContainer {
     Command manualWrist =
         new RunCommand(() -> intake.setWristVoltage(m_otherController.getRightY() * 0.25),
      intake);
-    ParallelCommandGroup manualCommandGroup = new ParallelCommandGroup(manualLift, manualWrist);
-    m_otherController.start().whileTrue(manualCommandGroup);
+     // ParallelCommandGroup manualCommandGroup = new ParallelCommandGroup(manualLift, manualWrist);
+    // m_otherController.start().whileTrue(manualCommandGroup);
+     m_otherController.leftStick().onTrue(manualLift);
+    m_otherController.rightStick().onTrue(manualWrist);
 
   }
 
@@ -279,7 +283,9 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  
   public Command getAutonomousCommand() {
     return autoChooser.getSelected().withTimeout(1.5);
   }
+  
 }
