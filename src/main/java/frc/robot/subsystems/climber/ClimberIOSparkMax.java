@@ -48,4 +48,9 @@ public class ClimberIOSparkMax implements ClimberIO {
   public void stopMotor() {
     motor.stopMotor();
   }
+
+  @Override
+  public void set(double speed) {
+    motor.set(speed);
+  }
 }

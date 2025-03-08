@@ -13,4 +13,6 @@ public interface ClimberIO {
   public default void setMotorVoltage(double volts) {}
 
   public default void stopMotor() {}
+
+  public default void set(double speed) {}
 }

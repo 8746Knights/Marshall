@@ -21,7 +21,7 @@ public final class Constants {
     public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
     public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
    public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED  = Units.feetToMeters(8);
+    public static final double MAX_SPEED  = Units.feetToMeters(4);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 //  public static final class AutonConstants
@@ -58,11 +58,13 @@ public final class Constants {
      * Kp - The proportional coefficient. Must be >= 0.
      * Ki - The integral coefficient. Must be >= 0.
      * Kd - The differential coefficient. Must be >= 0.
+     * Kff - The feed forward coefficient
       */
     public static final double ELEVATOR_KP = .027;
     public static final double ELEVATOR_KI = 0;
     public static final double ELEVATOR_KD = 0;
-    public static final double ELEVATOR_KFF = .0005;
+    // feed forward not used because ElevatorFeedforward is calculated in ElevatorIOSparkMax class
+    public static final double ELEVATOR_KFF = .10; // 0.10 = 10%; was 0.0005 in Penn State code (but they have greater gear ratio)
 
     public static final int ELEV_AMP = 40;
 
@@ -86,6 +88,8 @@ public final class Constants {
     public static final double ELEVATOR_KV = 3.8;
     //voltage to overcome acceleration
     public static final double ELEVATOR_KA = 0.17;
+
+    public static final double ELEVATOR_SPEED = 0.5; // 0 - 1, multiplier on the press
 
   }
   public static class CANConstants {
@@ -125,27 +129,50 @@ public final class Constants {
     public static final int WRIST_AMP = 40;
 
     public static final int ALGAE_AMP = 15;
+
+    public static final double WRIST_SPEED = 0.1; // speed between 0 (0%) and 1 (100%)
+    public static final double INTAKE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
+    public static final double ALGAE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
+
+    /**
+     * contsants for the elevator feed forward
+     * https://first.wpi.edu/wpilib/allwpilib/docs/release/java/edu/wpi/first/math/controller/ElevatorFeedforward.html
+     * ks - The static gain.
+     * kg - The gravity gain.
+     * kv - The velocity gain.
+     * ka - The acceleration gain.
+     */
+    //voltage to overcome static friction
+    public static final double WRIST_KS = 0.02;
+    //voltage to overcome gravity
+    public static final double WRIST_KG = 0.9;
+    //voltage to overcome velocity
+    public static final double WRIST_KV = 3.8;
+    //voltage to overcome acceleration
+    public static final double WRIST_KA = 0.17;
   }
 
   public static class ClimberConstants {
     public static final int CLIMBER_AMP = 40;
     public static final int MOTOR_GEAR_RATIO = 100;
     public static final int CAN_TIMEOUT = 250;
+
+    public static final double CLIMB_SPEED = 0.5;
   }
 
   public static class ReefscapeConstants {
     public static final double PROCESSOR_HEIGHT = 0;     
     public static final double SOURCE_HEIGHT =  8.75;
-    public static final double L1_HEIGHT = 3;
+    public static final double L1_HEIGHT = 0.1; // 3;
     public static final double L2_HEIGHT = 4.75;
-    public static final double L3_HEIGHT =  21.5;
-    public static final double L4_HEIGHT = 52.5;
+    public static final double L3_HEIGHT =  12.5;
+    public static final double L4_HEIGHT = 21.5;
     public static final double TOP_ALGAE_HEIGHT = PROCESSOR_HEIGHT + 34.5;
   
-    public static final double WRIST_CONVERSION_FACTOR = 243 / 9;
+    public static final double WRIST_CONVERSION_FACTOR = 243 / 9; // equals 27
     public static final double PROCESSOR_ANGLE = 0;
     public static final double SOURCE_ANGLE = 0.15 * WRIST_CONVERSION_FACTOR;
-    public static final double L1_ANGLE = 0.35 * WRIST_CONVERSION_FACTOR;
+    public static final double L1_ANGLE = 0.1 * WRIST_CONVERSION_FACTOR; // 0.35 * WRIST_CONVERSION_FACTOR;
     public static final double L2_ANGLE = 0.255 * WRIST_CONVERSION_FACTOR;
     public static final double L3_ANGLE = 0.27 * WRIST_CONVERSION_FACTOR;
     public static final double L4_ANGLE = 0.335 * WRIST_CONVERSION_FACTOR;

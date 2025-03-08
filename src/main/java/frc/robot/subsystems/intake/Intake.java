@@ -42,8 +42,7 @@ public class Intake extends SubsystemBase {
   }
 
   public double getWristPosition() {
- //   return inputs.coralWristPosition;
-    return targetPosition;
+    return io.getWristPosition();
   }
 
   public void wristAngle(double position) {
@@ -55,5 +54,23 @@ public class Intake extends SubsystemBase {
     io.setWristVoltage(voltage);
   }
 
-  public void resetAngle(double radians) {}
+  public void resetAngle(double radians) {
+  }
+
+  public void setWristSpeed(double speed) {
+    io.setWristSpeed(speed);
+  }
+
+  public void setIntakeSpeed(double speed) {
+    io.setIntakeSpeed(speed);
+  }
+
+  public void setAlgaeSpeed(double speed) {
+    io.setAlgaeSpeed(speed);
+  }
+
+  public void resetPosition()
+  {
+    io.resetPosition();
+  }
 }

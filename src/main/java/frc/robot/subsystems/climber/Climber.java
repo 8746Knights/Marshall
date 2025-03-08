@@ -20,4 +20,8 @@ public class Climber extends SubsystemBase {
     io.stopMotor();
   }
 
+  public void set(double speed) {
+    io.set(speed);
+  }
+
 }

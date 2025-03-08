@@ -30,4 +30,6 @@ public interface ElevatorIO {
   public default void resetPosition() {}
 
   public default void stop() {}
+
+  public default void resetPositionTo(double encoderValue){}
 }

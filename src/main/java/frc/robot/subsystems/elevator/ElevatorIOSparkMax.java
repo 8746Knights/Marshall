@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import frc.robot.Constants.ElevatorConstants;
 
 import com.revrobotics.spark.SparkMax;
@@ -23,7 +24,12 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     leadMotor = new SparkMax(ElevatorConstants.ELEVATOR_LEAD_SM, MotorType.kBrushless);
     followerMotor = new SparkMax(ElevatorConstants.ELEVATOR_FOLLOWER_SM, MotorType.kBrushless);
 
-    
+    // initialize feed forward
+    ElevatorFeedforward feedforward = new ElevatorFeedforward(ElevatorConstants.ELEVATOR_KS, 
+                                                              ElevatorConstants.ELEVATOR_KG, 
+                                                              ElevatorConstants.ELEVATOR_KV, 
+                                                              ElevatorConstants.ELEVATOR_KA);
+
     // Initialize the encoder for main
     encoder = leadMotor.getEncoder();
 
@@ -37,7 +43,11 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         .inverted(true);
     leadConfig
         .closedLoop
-            .pidf(ElevatorConstants.ELEVATOR_KP,ElevatorConstants.ELEVATOR_KI,ElevatorConstants.ELEVATOR_KD, ElevatorConstants.ELEVATOR_KFF);
+            .pidf(ElevatorConstants.ELEVATOR_KP,
+                  ElevatorConstants.ELEVATOR_KI,
+                  ElevatorConstants.ELEVATOR_KD, 
+                  feedforward.calculate(ElevatorConstants.ELEVATOR_KV,
+                                        ElevatorConstants.ELEVATOR_KA));
 
     leadMotor.configure(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -49,7 +59,12 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         .idleMode(IdleMode.kBrake);
     followerConfig
         .closedLoop
-            .pidf(ElevatorConstants.ELEVATOR_KP,ElevatorConstants.ELEVATOR_KI,ElevatorConstants.ELEVATOR_KD, ElevatorConstants.ELEVATOR_KFF);
+            .pidf(ElevatorConstants.ELEVATOR_KP,
+                  ElevatorConstants.ELEVATOR_KI,
+                  ElevatorConstants.ELEVATOR_KD, 
+                  feedforward.calculate(ElevatorConstants.ELEVATOR_KV,
+                                        ElevatorConstants.ELEVATOR_KA));
+
 
     followerMotor.configure(followerConfig,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -78,6 +93,12 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   public void resetPosition() {
     // Reset the encoder to the specified position
     encoder.setPosition(0);
+  }
+
+  @Override
+  public void resetPositionTo(double encoderValue)
+  {
+    encoder.setPosition(encoderValue);
   }
 
   @Override

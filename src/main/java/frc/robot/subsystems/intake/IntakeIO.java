@@ -21,10 +21,15 @@ public interface IntakeIO {
   public default void adjustAngle(double angleRadians) {}
 
   public default void wristAngle(double position) {}
-
+  
   public default double getWristPosition() {
     return 0;
   }
 
   public default void setWristVoltage(double voltage) {}
+
+  public default void setWristSpeed(double speed) {}
+  public default void setIntakeSpeed(double speed) {}
+  public default void setAlgaeSpeed(double speed) {}
+  public default void resetPosition() {}
 }
