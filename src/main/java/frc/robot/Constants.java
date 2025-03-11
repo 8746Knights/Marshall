@@ -46,6 +46,7 @@ public final class Constants {
     public static final double DEADBAND        = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
+    public static final double LEFT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
   public static class ElevatorConstants {
@@ -131,7 +132,7 @@ public final class Constants {
     public static final int ALGAE_AMP = 15;
 
     public static final double WRIST_SPEED = 0.1; // speed between 0 (0%) and 1 (100%)
-    public static final double INTAKE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
+    public static final double INTAKE_SPEED = 0.1; // speed between 0 (0%) and 1 (100%)
     public static final double ALGAE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
 
     /**
@@ -163,7 +164,7 @@ public final class Constants {
   public static class ReefscapeConstants {
     public static final double PROCESSOR_HEIGHT = 0;     
     public static final double SOURCE_HEIGHT =  8.75;
-    public static final double L1_HEIGHT = 0.1; // 3;
+    public static final double L1_HEIGHT = 0.004; // 3;
     public static final double L2_HEIGHT = 4.75;
     public static final double L3_HEIGHT =  12.5;
     public static final double L4_HEIGHT = 21.5;

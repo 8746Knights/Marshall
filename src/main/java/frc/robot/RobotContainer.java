@@ -13,6 +13,8 @@ import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.climber.*;
 
 import java.io.File;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -48,7 +50,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
     // set up the Joystick
-    final         CommandJoystick m_driverController = new CommandJoystick(OperatorConstants.kDriverControllerPort);
+    final         CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
     //final CommandXboxController m_driverController = new CommandXboxController(0);
     final CommandXboxController m_otherController = new CommandXboxController(1);
 
@@ -62,27 +64,31 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_driverController.getY() * -1,
-                                                                () -> m_driverController.getX() * -1)
-                                                            .withControllerRotationAxis(m_driverController::getX)
+                                                                () -> m_driverController.getLeftX() * -1,
+                                                                () -> m_driverController.getLeftY() * 1)
+                                                            .withControllerRotationAxis(m_driverController::getRightX)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getX,
-  m_driverController::getY)
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getRightX,
+                                                                                             m_driverController::getRightY)
                                                            .headingWhile(true);
 
+/* 
  SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                   () -> -m_driverController.getY(),
-                                                                   () -> -m_driverController.getX())
+                                                                   () -> -m_driverController.getLeftY(),
+                                                                   () -> -m_driverController.getLeftX())
                                                                .withControllerRotationAxis(() -> m_driverController.getRawAxis(2))
                                                                .deadband(OperatorConstants.DEADBAND)
                                                                .scaleTranslation(0.8)
                                                                .allianceRelativeControl(true);
   // Derive the heading axis with math!
+
+  */
+  /*
   SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
                                                                      .withControllerHeadingAxis(() -> Math.sin(
                                                                       m_driverController.getRawAxis(
@@ -92,7 +98,7 @@ public class RobotContainer {
                                                                                                         2) * Math.PI) *
                                                                                                       (Math.PI * 2))
                                                                      .headingWhile(true);
-
+*/
   private Elevator elevator;
   private Climber climber;
   private Intake intake;
@@ -143,17 +149,24 @@ public class RobotContainer {
    */
   private void configureBindings() {
   
-    Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
+    // Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
+    Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+        () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> m_driverController.getRightX(),
+        () -> m_driverController.getRightY());
     Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
-    Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
-    Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleSim);
+   // Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
+   // Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
+    // Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
+       // driveDirectAngleSim);
+
+      drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
     if (RobotBase.isSimulation())
     {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
+      // drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else
     {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
@@ -180,6 +193,34 @@ public class RobotContainer {
     m_driverController.povLeft().whileTrue(climbHoldCommand);
    
 
+
+    // ADDED FOR TESTING????
+
+
+/*
+    if (DriverStation.isTest())
+    {
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+
+      m_driverController.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      m_driverController.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      m_driverController.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      m_driverController.back().whileTrue(drivebase.centerModulesCommand());
+      m_driverController.leftBumper().onTrue(Commands.none());
+      m_driverController.rightBumper().onTrue(Commands.none());
+    } else
+    {
+      m_driverController.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      m_driverController.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      m_driverController.start().whileTrue(Commands.none());
+      m_driverController.back().whileTrue(Commands.none());
+      m_driverController.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      m_driverController.rightBumper().onTrue(Commands.none());
+    }
+
+*/
+
+
     /*
      * ALGAE COMMANDS & CONTROLS
      */
@@ -191,8 +232,10 @@ public class RobotContainer {
     Command intakeAlgaeCommand =
         new StartEndCommand(
             () -> intake.setAlgaeVoltage(-12), () -> intake.setAlgaeVoltage(0), intake);
+
     // m_driverController.rightTrigger().whileTrue(intakeAlgaeCommand);
     m_otherController.rightTrigger(0.25).whileTrue(intakeAlgaeCommand);
+
     /*
      * ALGAE PROCESSOR
      */
@@ -280,6 +323,16 @@ public class RobotContainer {
      m_otherController.leftStick().onTrue(manualLift);
     m_otherController.rightStick().onTrue(manualWrist);
 
+
+    // Auto Place L4 and Back
+    /* 
+    Command autoPlaceL4AndGoBackElevator = 
+      new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L4_HEIGHT), elevator);
+    Command autoPlaceL4AndGoBackWrist = 
+      new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L4_ANGLE), intake);
+    Command autoPlaceL4AndGoBackIntake =
+      new RunCommand(() -> intake.setIntakeSpeed
+      */      
   }
 
   /**

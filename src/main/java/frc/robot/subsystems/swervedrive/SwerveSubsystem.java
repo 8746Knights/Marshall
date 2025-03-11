@@ -408,7 +408,9 @@ public class SwerveSubsystem extends SubsystemBase
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
    * @return Drive command.
    */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  public Command driveCommand(DoubleSupplier translationX, 
+                              DoubleSupplier translationY, 
+                              DoubleSupplier angularRotationX)
   {
     return run(() -> {
       // Make the robot move
@@ -430,7 +432,9 @@ public class SwerveSubsystem extends SubsystemBase
    * @param headingY     Heading Y to calculate angle of the joystick.
    * @return Drive command.
    */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
+  public Command driveCommand(DoubleSupplier translationX, 
+                              DoubleSupplier translationY, 
+                              DoubleSupplier headingX,
                               DoubleSupplier headingY)
   {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
@@ -447,7 +451,6 @@ public class SwerveSubsystem extends SubsystemBase
                                                                       swerveDrive.getMaximumChassisVelocity()));
     });
   }
-
   /**
    * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
    * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity control for
