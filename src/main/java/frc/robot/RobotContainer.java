@@ -124,8 +124,6 @@ public class RobotContainer {
 
    // Command autoCommand = new RunCommand (() -> drivebase.driveToDistanceCommand(ReefscapeConstants.DRIVE_OFF_LINE,ReefscapeConstants.DRIVE_OFF_SPEED),drivebase);
    // autoChooser.addOption("Drive Off line", autoCommand);
-
-
     
     // Configure the trigger bindings
     configureBindings();
@@ -195,8 +193,6 @@ public class RobotContainer {
 
 
     // ADDED FOR TESTING????
-
-
 /*
     if (DriverStation.isTest())
     {
@@ -219,7 +215,6 @@ public class RobotContainer {
     }
 
 */
-
 
     /*
      * ALGAE COMMANDS & CONTROLS
@@ -279,7 +274,7 @@ public class RobotContainer {
         // new ParallelCommandGroup(liftToL1Command, wristToL1Command);
     m_otherController.a().onTrue(liftToL1Command);
     
-
+  
     // L2 state
     Command liftToL2Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L2_HEIGHT), elevator);
     Command wristToL2Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L2_ANGLE), intake);
