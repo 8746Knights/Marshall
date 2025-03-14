@@ -131,8 +131,8 @@ public final class Constants {
 
     public static final int ALGAE_AMP = 15;
 
-    public static final double WRIST_SPEED = 0.1; // speed between 0 (0%) and 1 (100%)
-    public static final double INTAKE_SPEED = 0.1; // speed between 0 (0%) and 1 (100%)
+    public static final double WRIST_SPEED = 0.05; // speed between 0 (0%) and 1 (100%)
+    public static final double INTAKE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
     public static final double ALGAE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
 
     /**

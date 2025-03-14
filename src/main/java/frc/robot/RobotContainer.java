@@ -64,9 +64,9 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_driverController.getLeftX() * -1,
-                                                                () -> m_driverController.getLeftY() * 1)
-                                                            .withControllerRotationAxis(m_driverController::getRightX)
+                                                                () -> m_driverController.getLeftY() * 1,
+                                                                () -> m_driverController.getLeftX() * 1)
+                                                            .withControllerRotationAxis (m_driverController::getRightX)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -74,7 +74,7 @@ public class RobotContainer {
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getRightX,
-                                                                                             m_driverController::getRightY)
+                                                                                            m_driverController::getRightY)
                                                            .headingWhile(true);
 
 /* 
@@ -118,6 +118,8 @@ public class RobotContainer {
     intake.resetPosition();
     
 
+   autoChooser = new SendableChooser<>();
+
     // autoChooser = AutoBuilder.buildAutoChooser();
     // ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     // autoTab.add(autoChooser);
@@ -154,20 +156,29 @@ public class RobotContainer {
         () -> m_driverController.getRightX(),
         () -> m_driverController.getRightY());
     Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
+
+    Command driveRobotOrientedDirectAngle = drivebase.driveCommand(
+      () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+      () -> m_driverController.getRightX(),
+      () -> m_driverController.getRightY());
+  Command driveRobotOrientedAnglularVelocity    = drivebase.drive(driveAngularVelocity);
+
+
     Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
    // Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
    // Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     // Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
        // driveDirectAngleSim);
 
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+      drivebase.setDefaultCommand(driveRobotOrientedDirectAngle);
 
     if (RobotBase.isSimulation())
     {
       // drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else
     {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveRobotOrientedAnglularVelocity);
     }
 
     Pigeon2 pigeon = new Pigeon2(CANConstants.PIGEON_ID);
@@ -337,7 +348,8 @@ public class RobotContainer {
    */
   
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected().withTimeout(1.5);
+    // return autoChooser.getSelected().withTimeout(1.5);
+    return drivebase.getAutonomousCommand("New Auto");
   }
 
   public void execute() {
