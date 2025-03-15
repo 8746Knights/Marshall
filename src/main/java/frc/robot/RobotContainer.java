@@ -20,7 +20,9 @@ import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -102,7 +104,7 @@ public class RobotContainer {
   private Elevator elevator;
   private Climber climber;
   private Intake intake;
-
+  private DigitalInput bottomLimitSwitch;
 
     // Dashboard inputs
     private static SendableChooser<Command> autoChooser;
@@ -116,11 +118,15 @@ public class RobotContainer {
     climber = new Climber(new ClimberIOSparkMax());
     intake = new Intake(new IntakeIOSparkMax());
     intake.resetPosition();
+    bottomLimitSwitch = new DigitalInput(26);
     
 
-   autoChooser = new SendableChooser<>();
+   // autoChooser = new SendableChooser<>();
+   SmartDashboard.putData(autoChooser);
 
-    // autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+
     // ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     // autoTab.add(autoChooser);
 
@@ -164,21 +170,20 @@ public class RobotContainer {
       () -> m_driverController.getRightY());
   Command driveRobotOrientedAnglularVelocity    = drivebase.drive(driveAngularVelocity);
 
-
     Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
    // Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
    // Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     // Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
        // driveDirectAngleSim);
 
-      drivebase.setDefaultCommand(driveRobotOrientedDirectAngle);
+      drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
     if (RobotBase.isSimulation())
     {
       // drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else
     {
-      drivebase.setDefaultCommand(driveRobotOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
 
     Pigeon2 pigeon = new Pigeon2(CANConstants.PIGEON_ID);
@@ -238,7 +243,7 @@ public class RobotContainer {
     Command intakeAlgaeCommand =
         new StartEndCommand(
             () -> intake.setAlgaeVoltage(-12), () -> intake.setAlgaeVoltage(0), intake);
-
+               
     // m_driverController.rightTrigger().whileTrue(intakeAlgaeCommand);
     m_otherController.rightTrigger(0.25).whileTrue(intakeAlgaeCommand);
 
@@ -251,7 +256,7 @@ public class RobotContainer {
         new RunCommand(() -> intake.wristAngle(ReefscapeConstants.PROCESSOR_ANGLE), intake);
     //ParallelCommandGroup processorCommandGroup =
         //new ParallelCommandGroup(liftToProcessorCommand, wristToProcessorCommand);
-    m_otherController.povDown().onTrue(liftToProcessorCommand);
+    // m_otherController.povDown().onTrue(liftToProcessorCommand);
 
 
     /*
@@ -259,12 +264,12 @@ public class RobotContainer {
      */
     Command intakeCoralCommand =
       new StartEndCommand(
-            () -> intake.setCoralIntakeVoltage(-0.6), () -> intake.setCoralIntakeVoltage(0), intake);
+            () -> intake.setIntakeSpeed(-IntakeConstants.INTAKE_SPEED), () -> intake.setCoralIntakeVoltage(0), intake);
     m_otherController.leftTrigger(0.25).whileTrue(intakeCoralCommand);
 
     Command ejectCoralCommand =
         new StartEndCommand(
-            () -> intake.setCoralIntakeVoltage(0.6), () -> intake.setCoralIntakeVoltage(0), intake);
+            () -> intake.setIntakeSpeed(IntakeConstants.INTAKE_SPEED), () -> intake.setCoralIntakeVoltage(0), intake);
     m_otherController.leftBumper().whileTrue(ejectCoralCommand);
 
         // set elevator and wrist to intake position
@@ -273,7 +278,7 @@ public class RobotContainer {
     Command wristToSourceCommand = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.SOURCE_ANGLE), intake);
     //ParallelCommandGroup sourceCommandGroup =
       //  new ParallelCommandGroup(liftToSourceCommand, wristToSourceCommand);
-    m_otherController.povLeft().onTrue(liftToSourceCommand);
+    // m_otherController.povLeft().onTrue(liftToSourceCommand);
 
     /*
      * REEF STATES
@@ -283,29 +288,29 @@ public class RobotContainer {
     Command wristToL1Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L1_ANGLE), intake);
     // ParallelCommandGroup l1CommandGroup =
         // new ParallelCommandGroup(liftToL1Command, wristToL1Command);
-    m_otherController.a().onTrue(liftToL1Command);
+    // m_otherController.a().onTrue(liftToL1Command);
     
   
     // L2 state
     Command liftToL2Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L2_HEIGHT), elevator);
     Command wristToL2Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L2_ANGLE), intake);
-    //ParallelCommandGroup l2CommandGroup =
-        //new ParallelCommandGroup(liftToL2Command, wristToL2Command);
-    m_otherController.b().onTrue(liftToL2Command);
+    ParallelCommandGroup l2CommandGroup =
+        new ParallelCommandGroup(liftToL2Command, wristToL2Command);
+    // m_otherController.b().onTrue(l2CommandGroup);
 
     // L3 state
     Command liftToL3Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L3_HEIGHT), elevator);
     Command wristToL3Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L3_ANGLE), intake);
     //ParallelCommandGroup l3CommandGroup =
         //new ParallelCommandGroup(liftToL3Command, wristToL3Command);
-    m_otherController.y().onTrue(liftToL3Command);
+    // m_otherController.y().onTrue(liftToL3Command);
 
     // L4 state
     Command liftToL4Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L4_HEIGHT), elevator);
     Command wristToL4Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L4_ANGLE), intake);
     //ParallelCommandGroup l4CommandGroup =
        // new ParallelCommandGroup(liftToL4Command, wristToL4Command);
-    m_otherController.x().onTrue(liftToL4Command);
+    // m_otherController.x().onTrue(liftToL4Command);
 
     // Top algae state
     Command liftToTopAlgaeCommand =
@@ -314,7 +319,7 @@ public class RobotContainer {
         new RunCommand(() -> intake.wristAngle(ReefscapeConstants.TOP_ALGAE_ANGLE), intake);
     //ParallelCommandGroup topAlgaeCommandGroup =
         //new ParallelCommandGroup(liftToTopAlgaeCommand, wristToTopAlgaeCommand);
-    m_otherController.povUp().onTrue(liftToTopAlgaeCommand);
+    // m_otherController.povUp().onTrue(liftToTopAlgaeCommand);
 
     /*
      * Manual Controls
@@ -329,6 +334,15 @@ public class RobotContainer {
      m_otherController.leftStick().onTrue(manualLift);
     m_otherController.rightStick().onTrue(manualWrist);
 
+    Command resetElevatorPigeon =
+      new RunCommand(() -> elevator.resetPosition(), elevator);
+    m_otherController.start().onTrue(resetElevatorPigeon);
+
+    Command resetWristPigeon = 
+      new RunCommand(() -> intake.resetPosition(), intake);
+    m_driverController.start().onTrue(resetWristPigeon);
+
+
 
     // Auto Place L4 and Back
     /* 
@@ -338,7 +352,14 @@ public class RobotContainer {
       new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L4_ANGLE), intake);
     Command autoPlaceL4AndGoBackIntake =
       new RunCommand(() -> intake.setIntakeSpeed
-      */      
+      */     
+      
+      /*
+  if (bottomLimitSwitch.get() == true)
+  {
+    elevator.resetPosition();
+  }
+    */
   }
 
   /**
@@ -348,8 +369,9 @@ public class RobotContainer {
    */
   
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected().withTimeout(1.5);
-    return drivebase.getAutonomousCommand("New Auto");
+    // return autoChooser.getSelected();
+    // return drivebase.getAutonomousCommand("New Auto");
+    return new PathPlannerAuto("RedLeftSideAuto");
   }
 
   public void execute() {
