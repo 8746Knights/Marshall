@@ -108,6 +108,7 @@ public class RobotContainer {
 
     // Dashboard inputs
     private static SendableChooser<Command> autoChooser;
+    private static SmartDashboard allianceChooser;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -119,12 +120,11 @@ public class RobotContainer {
     intake = new Intake(new IntakeIOSparkMax());
     intake.resetPosition();
     bottomLimitSwitch = new DigitalInput(26);
-    
 
-   // autoChooser = new SendableChooser<>();
-   SmartDashboard.putData(autoChooser);
 
     autoChooser = AutoBuilder.buildAutoChooser();
+
+
 
 
     // ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
@@ -235,6 +235,7 @@ public class RobotContainer {
     /*
      * ALGAE COMMANDS & CONTROLS
      */
+    /* 
     Command ejectAlgaeCommand =
         new StartEndCommand(
             () -> intake.setAlgaeVoltage(12), () -> intake.setAlgaeVoltage(0), intake);
@@ -288,29 +289,29 @@ public class RobotContainer {
     Command wristToL1Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L1_ANGLE), intake);
     // ParallelCommandGroup l1CommandGroup =
         // new ParallelCommandGroup(liftToL1Command, wristToL1Command);
-    // m_otherController.a().onTrue(liftToL1Command);
+    m_otherController.a().onTrue(liftToL1Command);
     
   
     // L2 state
     Command liftToL2Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L2_HEIGHT), elevator);
     Command wristToL2Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L2_ANGLE), intake);
-    ParallelCommandGroup l2CommandGroup =
-        new ParallelCommandGroup(liftToL2Command, wristToL2Command);
-    // m_otherController.b().onTrue(l2CommandGroup);
+    //ParallelCommandGroup l2CommandGroup =
+        //new ParallelCommandGroup(liftToL2Command, wristToL2Command);
+    m_otherController.b().onTrue(liftToL2Command);
 
     // L3 state
     Command liftToL3Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L3_HEIGHT), elevator);
-    Command wristToL3Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L3_ANGLE), intake);
-    //ParallelCommandGroup l3CommandGroup =
-        //new ParallelCommandGroup(liftToL3Command, wristToL3Command);
-    // m_otherController.y().onTrue(liftToL3Command);
+    Command wristToL3Command = new RunCommand(() -> intake.setWristPosition(ReefscapeConstants.L3_ANGLE), intake);
+    ParallelCommandGroup l3CommandGroup =
+        new ParallelCommandGroup(liftToL3Command, wristToL3Command);
+    m_otherController.y().onTrue(l3CommandGroup);
 
     // L4 state
     Command liftToL4Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L4_HEIGHT), elevator);
     Command wristToL4Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L4_ANGLE), intake);
     //ParallelCommandGroup l4CommandGroup =
        // new ParallelCommandGroup(liftToL4Command, wristToL4Command);
-    // m_otherController.x().onTrue(liftToL4Command);
+    m_otherController.x().onTrue(liftToL4Command);
 
     // Top algae state
     Command liftToTopAlgaeCommand =
@@ -320,6 +321,7 @@ public class RobotContainer {
     //ParallelCommandGroup topAlgaeCommandGroup =
         //new ParallelCommandGroup(liftToTopAlgaeCommand, wristToTopAlgaeCommand);
     // m_otherController.povUp().onTrue(liftToTopAlgaeCommand);
+
 
     /*
      * Manual Controls
@@ -334,15 +336,29 @@ public class RobotContainer {
      m_otherController.leftStick().onTrue(manualLift);
     m_otherController.rightStick().onTrue(manualWrist);
 
-    Command resetElevatorPigeon =
+    Command resetElevatorPigeon = 
       new RunCommand(() -> elevator.resetPosition(), elevator);
     m_otherController.start().onTrue(resetElevatorPigeon);
 
     Command resetWristPigeon = 
       new RunCommand(() -> intake.resetPosition(), intake);
-    m_driverController.start().onTrue(resetWristPigeon);
+    m_otherController.back().onTrue(resetWristPigeon);
+    
+    // m_otherController.getRawButtonPressed(7).onTrue(resetWristPigeon);
 
+    // ANNA'S CUSTOM AUTO CODE
+/*
+    Command goBackwards = new PathPlannerAuto("GoBackwardsAuto");
+    Command goForward = new PathPlannerAuto("GoForwardAuto");
+    Command goForwardAndTurnLeftSide = new PathPlannerAuto("FaceForwardAndTurnLeftSideAuto");
+    Command goForwardAndTurnRightSide = new PathPlannerAuto("FaceForwardAndTurnRightSideAuto"); 
 
+    autoChooser.addOption("GO BACKWARDS", goBackwards);
+    autoChooser.addOption("GO FORWARD", goForward);
+    autoChooser.addOption("FORWARD AND TURN (LEFT SIDE): FACE FORWARD", goForwardAndTurnLeftSide);
+    autoChooser.addOption("FORWARD AND TURN (RIGHT SIDE): FACE FORWARD", goForwardAndTurnRightSide);
+*/
+    SmartDashboard.putData(autoChooser);
 
     // Auto Place L4 and Back
     /* 
@@ -371,7 +387,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
     // return drivebase.getAutonomousCommand("New Auto");
-    return new PathPlannerAuto("RedLeftSideAuto");
+    return new PathPlannerAuto("GoBackwardAuto");
   }
 
   public void execute() {

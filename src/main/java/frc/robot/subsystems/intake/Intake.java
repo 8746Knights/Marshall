@@ -73,4 +73,9 @@ public class Intake extends SubsystemBase {
   {
     io.resetPosition();
   }
+
+  public void setWristPosition(double position)
+  {
+    io.setWristPosition(position);
+  }
 }

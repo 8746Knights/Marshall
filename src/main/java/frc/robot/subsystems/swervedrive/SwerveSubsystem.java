@@ -575,7 +575,7 @@ public class SwerveSubsystem extends SubsystemBase
     var alliance = DriverStation.getAlliance();
     return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
   }
-
+  
   /**
    * This will zero (calibrate) the robot to assume the current position is facing forward
    * <p>

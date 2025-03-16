@@ -101,10 +101,27 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     encoder.setPosition(encoderValue);
   }
 
+  public double requested;
+// Anna's attempt at new method of moving elevator to position [update: WORKS]
+@Override 
+public void setPosition(double position) {
+
+  while (encoder.getPosition() < position)
+  {
+    leadMotor.set(ElevatorConstants.AUTO_ELEVATOR_SPEED);
+  }
+  leadMotor.stopMotor();
+
+}
+
+
+
+  /*
   @Override
   public void setPosition(double position) {
-    leadMotor.getClosedLoopController().setReference(position,ControlType.kPosition);
+    leadMotor.getClosedLoopController().setReference(position, ControlType.kPosition);
   }
+  */
 
   @Override
   public void stop() {

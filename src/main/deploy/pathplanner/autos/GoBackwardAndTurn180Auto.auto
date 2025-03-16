@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftSidePath"
+            "pathName": "GoBackwardAndTurn180Path"
           }
         }
       ]

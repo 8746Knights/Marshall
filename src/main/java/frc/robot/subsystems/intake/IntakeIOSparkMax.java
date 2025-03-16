@@ -16,8 +16,8 @@ import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
 import frc.robot.Constants.*;
 
 public class IntakeIOSparkMax implements IntakeIO {
-  SparkMax algaeMotor1;
-  SparkMax algaeMotor2;
+  // SparkMax algaeMotor1;
+  // SparkMax algaeMotor2;
   SparkMax coralIntake;
   SparkMax coralWrist;
   RelativeEncoder wristEncoder;
@@ -25,8 +25,8 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   public IntakeIOSparkMax() {
     // find actual motor IDs
-    algaeMotor1 = new SparkMax(CANConstants.ALGAE_ONE_SM, MotorType.kBrushless);
-    algaeMotor2 = new SparkMax(CANConstants.ALGAE_TWO_SM, MotorType.kBrushless);
+   // algaeMotor1 = new SparkMax(CANConstants.ALGAE_ONE_SM, MotorType.kBrushless);
+   // algaeMotor2 = new SparkMax(CANConstants.ALGAE_TWO_SM, MotorType.kBrushless);
     coralIntake = new SparkMax(CANConstants.CORALINTAKE_SM, MotorType.kBrushless);
     coralWrist = new SparkMax(CANConstants.WRIST_SM, MotorType.kBrushless);
 
@@ -55,6 +55,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     coralWrist.configure(coralWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+    /*
     SparkMaxConfig algae1Config = new SparkMaxConfig();
     algae1Config
         .smartCurrentLimit(IntakeConstants.ALGAE_AMP)
@@ -69,10 +70,12 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     algaeMotor2.configure(algae2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+    */
     SparkMaxConfig coralIntakeConfig = new SparkMaxConfig();
     coralIntakeConfig
         .smartCurrentLimit(IntakeConstants.CORAL_AMP)
         .idleMode(IdleMode.kBrake);
+
 
     coralIntake.configure(coralIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -85,12 +88,14 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.coralWristPosition = coralWrist.getEncoder().getPosition();
   }
 
+  /*
   @Override
   public void setAlgaeVoltage(double voltage) {
     algaeMotor1.setVoltage(voltage);
     algaeMotor2.setVoltage(-voltage);
   }
 
+  */
   @Override
   public void setCoralIntakeVoltage(double voltage) {
     coralIntake.setVoltage(voltage);
@@ -112,6 +117,16 @@ public class IntakeIOSparkMax implements IntakeIO {
     return wristEncoder.getPosition();
   }
 
+  @Override 
+  public void setWristPosition(double position) {
+  
+    while (wristEncoder.getPosition() < position)
+    {
+      coralWrist.set(ElevatorConstants.AUTO_ELEVATOR_SPEED);
+    }
+    coralWrist.stopMotor();
+  
+  }
 
   @Override
   public void setWristVoltage(double voltage) {
@@ -129,12 +144,15 @@ public class IntakeIOSparkMax implements IntakeIO {
     coralIntake.set(speed);
   }
 
+
+/*
   @Override
   public void setAlgaeSpeed(double speed)
   {
     algaeMotor1.set(speed);
     algaeMotor2.set(speed);
   }
+*/
 
   @Override
   public void resetPosition()

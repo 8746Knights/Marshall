@@ -32,4 +32,6 @@ public interface IntakeIO {
   public default void setIntakeSpeed(double speed) {}
   public default void setAlgaeSpeed(double speed) {}
   public default void resetPosition() {}
+
+  public default void setWristPosition(double position) {}
 }
