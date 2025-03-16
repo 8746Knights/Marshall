@@ -269,7 +269,7 @@ public class RobotContainer {
 
     Command ejectCoralCommand =
         new StartEndCommand(
-            () -> intake.setIntakeSpeed(IntakeConstants.INTAKE_SPEED), () -> intake.setCoralIntakeVoltage(0), intake);
+            () -> intake.setIntakeSpeed(IntakeConstants.OUTAKE_SPEED), () -> intake.setCoralIntakeVoltage(0), intake);
     m_otherController.leftBumper().whileTrue(ejectCoralCommand);
 
         // set elevator and wrist to intake position

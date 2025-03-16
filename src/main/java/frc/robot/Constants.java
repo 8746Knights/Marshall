@@ -21,7 +21,7 @@ public final class Constants {
     public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
     public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
    public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED  = Units.feetToMeters(6);
+    public static final double MAX_SPEED  = Units.feetToMeters(7);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 //  public static final class AutonConstants
@@ -132,9 +132,9 @@ public final class Constants {
     public static final int ALGAE_AMP = 15;
 
     public static final double WRIST_SPEED = 0.05; // speed between 0 (0%) and 1 (100%)
-    public static final double INTAKE_SPEED = 0.6; // speed between 0 (0%) and 1 (100%)
+    public static final double INTAKE_SPEED = 0.5; // speed between 0 (0%) and 1 (100%)
+    public static final double OUTAKE_SPEED = 0.5;
     public static final double ALGAE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
-
     /**
      * contsants for the elevator feed forward
      * https://first.wpi.edu/wpilib/allwpilib/docs/release/java/edu/wpi/first/math/controller/ElevatorFeedforward.html
