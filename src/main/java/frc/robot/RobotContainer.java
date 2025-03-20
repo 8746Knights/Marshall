@@ -405,7 +405,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
     // return drivebase.getAutonomousCommand("New Auto");
-    return new PathPlannerAuto("PracticeAuto");
+    return new PathPlannerAuto("CenterAuto");
   }
 
   public void execute() {
