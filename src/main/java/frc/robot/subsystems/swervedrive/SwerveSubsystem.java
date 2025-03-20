@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
@@ -111,6 +112,7 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     setupPathPlanner(config);
+    // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this:: zeroGyroWithAlliance));
   }
 
   /**
@@ -429,7 +431,7 @@ public class SwerveSubsystem extends SubsystemBase
                               DoubleSupplier headingX,
                               DoubleSupplier headingY)
   {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
+    swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
 
       Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
@@ -731,4 +733,5 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return swerveDrive;
   }
+
 }

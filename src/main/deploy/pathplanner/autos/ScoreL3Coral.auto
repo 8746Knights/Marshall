@@ -1,0 +1,106 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GoToScoringPosition1Path"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "liftToL3Command"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "wristToL3Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ejectCoralCommand"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "liftToSouceCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "wristToSourceCommand"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GoToFeedPositionPath"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeCoralCommand"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GoToScoringPosition2Path"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "liftToL3Command"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "wristToL3Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ejectCoralCommand"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
