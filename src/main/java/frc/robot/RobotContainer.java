@@ -23,6 +23,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.revrobotics.spark.SparkLimitSwitch;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -54,12 +55,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
     // set up the Joystick
-    final         CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
+    final         CommandXboxController m_driverController = new CommandXboxController(1);
     //final CommandXboxController m_driverController = new CommandXboxController(0);
-    final CommandXboxController m_otherController = new CommandXboxController(1);
+    final CommandXboxController m_otherController = new CommandXboxController(0);
 
   // instantiate a SwerveSubsystem pointing to the deploy/swerve configuration 
   SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
+  
   //     
   //SwerveDrive swerveDrive = null;                                                                         
 
@@ -105,31 +107,32 @@ public class RobotContainer {
                                                                                                       (Math.PI * 2))
                                                                      .headingWhile(true);
 */
-  // private Elevator elevator;
+  private Elevator elevator;
   // private Climber climber;
-  // private Intake intake;
+  private Intake intake;
   // private DigitalInput bottomLimitSwitch;
 
     // Dashboard inputs
     private static SendableChooser<Command> autoChooser;
     // private static SmartDashboard allianceChooser;
 
+    private SparkLimitSwitch limitSwitch;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    /*
+    
     elevator = new Elevator(new ElevatorIOSparkMax());
     elevator.resetPosition();
-    climber = new Climber(new ClimberIOSparkMax());
+    // climber = new Climber(new ClimberIOSparkMax());
     intake = new Intake(new IntakeIOSparkMax());
-    intake.resetPosition();
-    bottomLimitSwitch = new DigitalInput(26);
-    */
+    // intake.resetPosition();
+    // bottomLimitSwitch = new DigitalInput(26);
+
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
-
+    limitSwitch = elevator.getLimitSwitch();
 
 
     // ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
@@ -245,6 +248,23 @@ public class RobotContainer {
     /*
      * ALGAE COMMANDS & CONTROLS
      */
+
+    // Command spinAlgaeCommand = new RunCommand(() -> intake.setAlgaeSpeed(IntakeConstants.ALGAE_SPEED), intake);
+    // m_otherController.rightBumper().whileTrue(spinAlgaeCommand);
+
+    // Command spinAlgaeTheOtherWay = new RunCommand(() -> intake.setAlgaeSpeed(-IntakeConstants.ALGAE_SPEED), intake);
+    // m_otherController.rightTrigger(0.25).whileTrue(spinAlgaeTheOtherWay);
+
+    Command spinAlgaeCommand =
+    new StartEndCommand(
+          () -> intake.setAlgaeSpeed(-IntakeConstants.ALGAE_SPEED), () -> intake.setAlgaeVoltage(0), intake);
+  m_otherController.rightTrigger(0.25).whileTrue(spinAlgaeCommand);
+
+  Command spinAlgaeTheOtherWayCommand =
+  new StartEndCommand(
+        () -> intake.setAlgaeSpeed(IntakeConstants.ALGAE_SPEED), () -> intake.setAlgaeVoltage(0), intake);
+m_otherController.rightBumper().whileTrue(spinAlgaeTheOtherWayCommand);
+
     /* 
     Command ejectAlgaeCommand =
         new StartEndCommand(
@@ -274,7 +294,8 @@ public class RobotContainer {
     /*
      * CORAL INTAKE
      */
-    /*
+    
+    
     Command intakeCoralCommand =
       new StartEndCommand(
             () -> intake.setIntakeSpeed(-IntakeConstants.INTAKE_SPEED), () -> intake.setCoralIntakeVoltage(0), intake);
@@ -285,6 +306,7 @@ public class RobotContainer {
             () -> intake.setIntakeSpeed(IntakeConstants.OUTAKE_SPEED), () -> intake.setCoralIntakeVoltage(0), intake);
     m_otherController.leftBumper().whileTrue(ejectCoralCommand);
 
+    /*
         // set elevator and wrist to intake position
     Command liftToSourceCommand =
         new RunCommand(() -> elevator.setPosition(ReefscapeConstants.SOURCE_HEIGHT), elevator);
@@ -294,37 +316,48 @@ public class RobotContainer {
     // m_otherController.povLeft().onTrue(liftToSourceCommand);
 */
 
+    // SOURCE PRESET
+    Command liftToSourceCommand = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.SOURCE_HEIGHT), elevator);
+    m_otherController.a().onTrue(liftToSourceCommand);
+
     /*
      * REEF STATES
      */
-    // L1 state
-    //Command liftToL1Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L1_HEIGHT), elevator);
-    //Command wristToL1Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L1_ANGLE), intake);
-    // ParallelCommandGroup l1CommandGroup =
-        // new ParallelCommandGroup(liftToL1Command, wristToL1Command);
-    //m_otherController.a().onTrue(liftToL1Command);
     
+    // L1 state
+    /*
+    Command liftToL1Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L1_HEIGHT), elevator);
+    Command wristToL1Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L1_ANGLE), intake);
+    ParallelCommandGroup l1CommandGroup =
+         new ParallelCommandGroup(liftToL1Command, wristToL1Command);
+    m_otherController.a().onTrue(l1CommandGroup);
+    */
+
+    // TESTING THE WRIST :)
+    // Command wristTestCommand = new RunCommand(() -> intake.wristAngle(-0.15), intake);
+    // m_otherController.().onTrue(wristTestCommand);
   
     // L2 state
-    //Command liftToL2Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L2_HEIGHT), elevator);
-    //Command wristToL2Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L2_ANGLE), intake);
-    //ParallelCommandGroup l2CommandGroup =
-        //new ParallelCommandGroup(liftToL2Command, wristToL2Command);
-    //m_otherController.b().onTrue(liftToL2Command);
+    Command liftToL2Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L2_HEIGHT), elevator);
+    // Command wristToL2Command = new RunCommand(() -> intake.wristAngle(0.12), intake);
+    // ParallelCommandGroup l2CommandGroup =
+       // new ParallelCommandGroup(liftToL2Command, wristToL2Command);
+    m_otherController.b().onTrue(liftToL2Command);
 
     // L3 state
-    //Command liftToL3Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L3_HEIGHT), elevator);
-    //Command wristToL3Command = new RunCommand(() -> intake.setWristPosition(ReefscapeConstants.L3_ANGLE), intake);
-    //ParallelCommandGroup l3CommandGroup =
-      //  new ParallelCommandGroup(liftToL3Command, wristToL3Command);
-    //m_otherController.y().onTrue(l3CommandGroup);
+    Command liftToL3Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L3_HEIGHT), elevator);
+    Command wristToL3Command = new RunCommand(() -> intake.wristAngle(0.12), intake);
+    // ParallelCommandGroup l3CommandGroup =
+      // new ParallelCommandGroup(liftToL3Command, wristToL3Command);
+    m_otherController.y().onTrue(liftToL3Command);
 
     // L4 state
-    //Command liftToL4Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L4_HEIGHT), elevator);
-    //Command wristToL4Command = new RunCommand(() -> intake.wristAngle(ReefscapeConstants.L4_ANGLE), intake);
-    //ParallelCommandGroup l4CommandGroup =
-       // new ParallelCommandGroup(liftToL4Command, wristToL4Command);
-    //m_otherController.x().onTrue(liftToL4Command);
+    Command liftToL4Command = new RunCommand(() -> elevator.setPosition(ReefscapeConstants.L4_HEIGHT), elevator);
+    Command wristToL4Command = new RunCommand(() -> intake.wristAngle(2), intake);
+    // ParallelCommandGroup l4CommandGroup =
+      // new ParallelCommandGroup(liftToL4Command, wristToL4Command);
+    m_otherController.x().onTrue(liftToL4Command);
+
 
     // Top algae state
     //Command liftToTopAlgaeCommand =
@@ -335,12 +368,26 @@ public class RobotContainer {
         //new ParallelCommandGroup(liftToTopAlgaeCommand, wristToTopAlgaeCommand);
     // m_otherController.povUp().onTrue(liftToTopAlgaeCommand);
 
+    
 
-     
+    // WRIST MOVEMENT
+    /* 
+    Command wristMovementCommand = 
+      new RunCommand(() -> intake.wristAngle(1), intake);
+    m_otherController.rightBumper().onTrue(wristMovementCommand);
+     */ 
+
+      /* 
+        new StartEndCommand(
+            () -> intake.setIntakeSpeed(IntakeConstants.OUTAKE_SPEED), () -> intake.setCoralIntakeVoltage(0), intake);
+    m_otherController.rightBumper().whileTrue(ejectCoralCommand);
+    */ 
+
+
     /*
      * Manual Controls
      */
-    /*
+
     Command manualLift =
         new RunCommand(() -> elevator.setVoltage(-m_otherController.getLeftY() * Constants.ElevatorConstants.ELEVATOR_SPEED), elevator);
     Command manualWrist =
@@ -348,10 +395,10 @@ public class RobotContainer {
      intake);
      // ParallelCommandGroup manualCommandGroup = new ParallelCommandGroup(manualLift, manualWrist);
     // m_otherController.start().whileTrue(manualCommandGroup);
-     m_otherController.leftStick().onTrue(manualLift);
+    m_otherController.leftStick().onTrue(manualLift);
     m_otherController.rightStick().onTrue(manualWrist);
-    */
-    /*
+    
+    
     Command resetElevatorPigeon = 
       new RunCommand(() -> elevator.resetPosition(), elevator);
     m_otherController.start().onTrue(resetElevatorPigeon);
@@ -359,8 +406,17 @@ public class RobotContainer {
     Command resetWristPigeon = 
       new RunCommand(() -> intake.resetPosition(), intake);
     m_otherController.back().onTrue(resetWristPigeon);
-    */
+    
+    
+    if (limitSwitch.isPressed())
+    {
+      elevator.resetPosition();
+    }
 
+
+    // Command testWristCommand = 
+    //   new RunCommand(() -> intake.setWristPosition(0.1), intake);
+    // m_driverController.b().onTrue(testWristCommand);
 
     // m_otherController.getRawButtonPressed(7).onTrue(resetWristPigeon);
 
@@ -409,10 +465,10 @@ public class RobotContainer {
   }
 
   public void execute() {
-    /*
+    
     SmartDashboard.putNumber("Elevator Position", elevator.getPosition());
     SmartDashboard.putNumber("Wrist Position", intake.getWristPosition());
-    */
+    
   }
   
 }

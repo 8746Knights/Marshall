@@ -1,5 +1,7 @@
 package frc.robot.subsystems.elevator;
 
+import com.revrobotics.spark.SparkLimitSwitch;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -49,5 +51,13 @@ public class Elevator extends SubsystemBase {
 
   public ElevatorIO getElevatorIO (){
     return this.io;
+  }
+
+  public void setPositionAnnaIsDying(String position) {
+    io.setPositionAnnaIsDying(position);
+  }
+
+  public SparkLimitSwitch getLimitSwitch() {
+    return io.getLimitSwitch();
   }
 }

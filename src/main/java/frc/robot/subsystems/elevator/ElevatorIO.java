@@ -1,6 +1,6 @@
 package frc.robot.subsystems.elevator;
 
-
+import com.revrobotics.spark.SparkLimitSwitch;
 
 public interface ElevatorIO {
 
@@ -32,4 +32,11 @@ public interface ElevatorIO {
   public default void stop() {}
 
   public default void resetPositionTo(double encoderValue){}
+
+  public default void setPositionAnnaIsDying(String position){}
+
+  public default SparkLimitSwitch getLimitSwitch(){
+    return null;
+  }
+
 }

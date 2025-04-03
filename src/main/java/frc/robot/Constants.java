@@ -18,10 +18,10 @@ import swervelib.math.Matter;
  */
 public final class Constants {
 
-    public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-    public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
-   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED  = Units.feetToMeters(4);
+  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+  public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
+  public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
+  public static final double MAX_SPEED  = Units.feetToMeters(4);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 //  public static final class AutonConstants
@@ -91,22 +91,24 @@ public final class Constants {
     public static final double ELEVATOR_KA = 0.17;
 
     public static final double ELEVATOR_SPEED = 0.65;
-    public static final double AUTO_ELEVATOR_SPEED = 0.3;                                                                     ; // 0 - 1, multiplier on the press
+    public static final double AUTO_ELEVATOR_SPEED = 0.45;                                                                     ; // 0 - 1, multiplier on the press
 
   }
   public static class CANConstants {
 
     // Elevator
     public static final int ELEVATOR_LEAD_SM = 21;
-    public static final int ELEVATOR_FOLLOWER_SM = 26;
+    public static final int ELEVATOR_FOLLOWER_SM = 22;
 
     //Coral Intake
-    public static final int WRIST_SM = 19;
-    public static final int CORALINTAKE_SM = 18;
+    public static final int WRIST_SM = 18;
+    public static final int CORALINTAKE_SM = 19;
 
     // Algae intake
     public static final int ALGAE_ONE_SM = 17;
     public static final int ALGAE_TWO_SM = 23;
+
+    public static final int ALGAE_SM = 20;
 
     // climber 
     public static final int CLIMBER_SM = 22;
@@ -122,7 +124,7 @@ public final class Constants {
 
   public static class IntakeConstants {
 
-    public static final double CORAL_KP = 0.55;
+    public static final double CORAL_KP = 0.01; 
     public static final double CORAL_KI = 0;
     public static final double CORAL_KD = 0;
     public static final double CORAL_KFF = 0.00375;
@@ -135,7 +137,8 @@ public final class Constants {
     public static final double WRIST_SPEED = 0.05; // speed between 0 (0%) and 1 (100%)
     public static final double INTAKE_SPEED = 0.5; // speed between 0 (0%) and 1 (100%)
     public static final double OUTAKE_SPEED = 0.5;
-    public static final double ALGAE_SPEED = 0.4; // speed between 0 (0%) and 1 (100%)
+    public static final double ALGAE_SPEED = 0.8; // speed between 0 (0%) and 1 (100%)
+    public static final double AUTO_WRIST_SPEED = 0.05;
     /**
      * contsants for the elevator feed forward
      * https://first.wpi.edu/wpilib/allwpilib/docs/release/java/edu/wpi/first/math/controller/ElevatorFeedforward.html
@@ -164,21 +167,31 @@ public final class Constants {
 
   public static class ReefscapeConstants {
     public static final double PROCESSOR_HEIGHT = 0;     
-    public static final double SOURCE_HEIGHT =  8.75;
+    public static final double SOURCE_HEIGHT =  9.5;
     public static final double L1_HEIGHT = 17; // 11.499929; // 3;
-    public static final double L2_HEIGHT = 22; //19.499929;
-    public static final double L3_HEIGHT =  40; // 39.594841;
-    public static final double L4_HEIGHT = 64; // 65.239532;
+    public static final double L2_HEIGHT = 18; // 19 was good for shooting it
+    public static final double L3_HEIGHT = 40; // 40; // 39.594841;
+    public static final double L4_HEIGHT = 65; // 64; // 65.239532;
     public static final double TOP_ALGAE_HEIGHT = 50; // PROCESSOR_HEIGHT + 34.5;
   
-    public static final double WRIST_CONVERSION_FACTOR = 243 / 9; // equals 27
-    public static final double PROCESSOR_ANGLE = 0;
-    public static final double SOURCE_ANGLE = 0.15 * WRIST_CONVERSION_FACTOR;
-    public static final double L1_ANGLE = 6.595242; // 0.1 * WRIST_CONVERSION_FACTOR; // 0.35 * WRIST_CONVERSION_FACTOR;
-    public static final double L2_ANGLE = 6.595242; // 0.255 * WRIST_CONVERSION_FACTOR;
-    public static final double L3_ANGLE = 5.595231; //0.27 * WRIST_CONVERSION_FACTOR;
-    public static final double L4_ANGLE = 5.595231; // 0.335 * WRIST_CONVERSION_FACTOR;
-    public static final double TOP_ALGAE_ANGLE = 0;
+    public static final double START_ANGLE = 0.065342;
+    public static final double GREATEST_ANGLE = 0.33;
+    public static final double SOURCE_ANGLE = 0.1;
+    public static final double L1_ANGLE = 0.3;
+    public static final double L2_ANGLE = 0.3;
+    public static final double L3_ANGLE = 0.3;
+    public static final double L4_ANGLE = 0.3;
+    public static final double TEST_ANGLE = 0.15;
+
+
+    // public static final double WRIST_CONVERSION_FACTOR = 243 / 9; // equals 27
+    // public static final double PROCESSOR_ANGLE = 0;
+    // public static final double SOURCE_ANGLE = 0.15 * WRIST_CONVERSION_FACTOR;
+    // public static final double L1_ANGLE = 5; // 0.1 * WRIST_CONVERSION_FACTOR; // 0.35 * WRIST_CONVERSION_FACTOR;
+    // public static final double L2_ANGLE = 5; // 6.595242; // 0.255 * WRIST_CONVERSION_FACTOR;
+    // public static final double L3_ANGLE = 5; // 6.595342; //0.27 * WRIST_CONVERSION_FACTOR;
+    // public static final double L4_ANGLE = 5; // 6.595342; // 0.335 * WRIST_CONVERSION_FACTOR;
+    // public static final double TOP_ALGAE_ANGLE = 0;
 
     public static final double DRIVE_OFF_LINE = 1.0;
     public static final double DRIVE_OFF_SPEED = .40;
